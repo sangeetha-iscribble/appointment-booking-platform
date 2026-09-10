@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<html lang="en" data-theme="light"></html>
+<head>
+<meta charset="UTF-8">
+<title>BookEase — Appointment Booking</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+  <div id="toast-container"></div>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>BookEase</h1>
+    <p class="subtitle">Sign in to manage your appointments</p>
+    <div class="tab-switch">
+      <button id="tab-login-btn" class="active">Login</button>
+      <button id="tab-signup-btn">Sign Up</button>
+    </div>
+    <input type="text" id="signup-name" placeholder="Full Name" class="hidden">
+    <input type="tel" id="signup-phone" placeholder="Phone Number" class="hidden">
+    <input type="email" id="login-email" placeholder="Email">
+    <input type="password" id="login-password" placeholder="Password">
+    <button class="btn" id="auth-submit" data-mode="login" style="width:100%;">Login</button>
+    <div id="message"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app-screen" class="hidden">
+ <header>
+  <div class="brand">
+    <span class="brand-icon">📅</span> BookEase
+  </div>
+  <div class="user-info">
+  <button class="theme-toggle" id="theme-toggle">🌙</button>
+  <div class="user-chip">
+      <div class="avatar" id="user-avatar"></div>
+      <div class="user-text">
+        <div id="user-name" class="user-name"></div>
+        <div id="user-role-badge" class="user-role hidden"></div>
+      </div>
+    </div>
+    <button class="btn secondary" id="btn-logout">Logout</button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn admin-only hidden" data-target="panel-admin-dashboard">Dashboard</button>
+  <button class="tab-btn admin-only hidden" data-target="panel-admin-users">Manage Users</button>
+  <button class="tab-btn admin-only hidden" data-target="panel-admin-services">Manage Services</button>
+  <button class="tab-btn admin-only hidden" data-target="panel-admin-providers">Manage Providers</button>
+  <button class="tab-btn admin-only hidden" data-target="panel-admin-notifications">Email Log</button>
+  <button class="tab-btn customer-only" data-target="panel-book">Book Appointment</button>
+  <button class="tab-btn customer-only" data-target="panel-bookings">My Bookings</button>
+</nav>
+
+  <div class="container">
+
+  <!-- BOOK APPOINTMENT PANEL (WIZARD) -->
+<div id="panel-book" class="tab-panel">
+  <div class="card wizard-card">
+
+    <div class="wizard-progress">
+      <div class="wizard-dot active" data-step="1"><span>1</span><small>Service</small></div>
+      <div class="wizard-line"></div>
+      <div class="wizard-dot" data-step="2"><span>2</span><small>Provider</small></div>
+      <div class="wizard-line"></div>
+      <div class="wizard-dot" data-step="3"><span>3</span><small>Date & Time</small></div>
+      <div class="wizard-line"></div>
+      <div class="wizard-dot" data-step="4"><span>4</span><small>Confirm</small></div>
+    </div>
+
+    <div class="wizard-viewport">
+      <div class="wizard-track" id="wizard-track">
+
+        <!-- STEP 1 -->
+        <div class="wizard-step active" data-step="1">
+          <h2>Choose a Service</h2>
+          <div class="service-list" id="services-list">Loading...</div>
+          <button class="btn wizard-next" id="next-to-provider">Continue →</button>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="wizard-step" data-step="2">
+          <h2>Choose a Provider</h2>
+          <div class="service-list" id="providers-list"></div>
+          <button class="btn wizard-next" id="next-to-slots">Continue →</button>
+          <button class="btn secondary wizard-back">← Back</button>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="wizard-step" data-step="3">
+          <h2>Pick a Date & Time</h2>
+          <input type="date" id="booking-date">
+          <div class="slots-grid" id="slots-list"></div>
+          <button class="btn secondary wizard-back">← Back</button>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="wizard-step" data-step="4">
+          <h2>Confirm Booking</h2>
+          <div class="confirm-summary-box" id="confirm-summary"></div>
+          <input type="tel" id="confirm-phone" placeholder="Contact phone number for this booking">
+          <button class="btn" id="btn-confirm">Confirm Booking</button>
+          <button class="btn secondary wizard-back">← Back</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+          <!-- BOOKING SUCCESS SCREEN -->
+        <div class="card success-card hidden" id="success-card">
+          <div class="success-icon">✓</div>
+          <h2>Your booking is confirmed!</h2>
+          <p class="success-subtext">We'll reach out to you with the appointment details. A confirmation has also been logged.</p>
+
+          <div class="confirm-summary-box" id="success-details"></div>
+
+          <div class="form-action-row">
+            <button class="btn" id="btn-book-another">Book Another Appointment</button>
+            <button class="btn secondary" id="btn-view-bookings">View My Bookings</button>
+          </div>
+        </div>
+</div>
+
+    <!-- MY BOOKINGS PANEL -->
+    <div id="panel-bookings" class="tab-panel hidden">
+      <div class="card">
+        <h2>My Bookings</h2>
+        <div id="bookings-list"></div>
+      </div>
+    </div>
+
+    <!-- ADMIN: DASHBOARD -->
+<div id="panel-admin-dashboard" class="tab-panel hidden">
+  <div class="card">
+    <h2>Overview</h2>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-number" id="stat-users">–</div>
+        <div class="stat-label">Total Users</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="stat-services">–</div>
+        <div class="stat-label">Services</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="stat-providers">–</div>
+        <div class="stat-label">Providers</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" id="stat-bookings">–</div>
+        <div class="stat-label">Total Bookings</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Recent Bookings (All Users)</h2>
+    <div id="admin-recent-bookings">Loading...</div>
+  </div>
+</div>
+
+    <!-- ADMIN: USERS -->
+<div id="panel-admin-users" class="tab-panel hidden">
+  <div class="card">
+    <h2>All Users</h2>
+    <input type="text" id="search-users" placeholder="🔍 Search by name or email...">
+    <div id="admin-users-list"></div>
+    <div class="pagination" id="users-pagination"></div>
+  </div>
+</div>
+
+    <!-- ADMIN: SERVICES -->
+<div id="panel-admin-services" class="tab-panel hidden">
+  <div class="card">
+    <h2 id="service-form-title">Add a Service</h2>
+    <input type="text" id="new-service-name" placeholder="Service name">
+    <input type="number" id="new-service-duration" placeholder="Duration (minutes)">
+    <input type="number" id="new-service-price" placeholder="Price (₹)">
+      <select id="new-service-category">
+        <option value="General">General</option>
+        <option value="Dental">Dental</option>
+        <option value="Medical">Medical</option>
+        <option value="Hair & Beauty">Hair & Beauty</option>
+        <option value="Wellness">Wellness</option>
+      </select>
+        <div class="form-action-row">
+      <button class="btn" id="btn-add-service">Add Service</button>
+      <button class="btn secondary hidden" id="btn-cancel-edit-service">Cancel Edit</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Existing Services</h2>
+    <input type="text" id="search-services" placeholder="🔍 Search services...">
+<div class="category-filter-row" id="category-filter-row"></div>
+<div id="admin-services-list"></div>
+<div class="pagination" id="services-pagination"></div>
+  </div>
+</div>
+
+    <!-- ADMIN: PROVIDERS -->
+<div id="panel-admin-providers" class="tab-panel hidden">
+  <div class="card">
+    <h2 id="provider-form-title">Add a Provider</h2>
+    <input type="text" id="new-provider-name" placeholder="Provider name">
+    <select id="new-provider-service" multiple size="4"></select>
+          <div class="form-action-row">
+            <button class="btn" id="btn-add-provider">Add Provider</button>
+            <button class="btn secondary hidden" id="btn-cancel-edit-provider">Cancel Edit</button>
+            <span class="form-hint">Hold Ctrl (Windows) or Cmd (Mac) to select multiple services</span>
+          </div>
+  </div>
+  <div class="card">
+    <h2>Existing Providers</h2>
+    <input type="text" id="search-providers" placeholder="🔍 Search providers...">
+    <div id="admin-providers-list"></div>
+    <div class="pagination" id="providers-pagination"></div>
+  </div>
+</div>
+
+<!-- ADMIN: NOTIFICATIONS -->
+<div id="panel-admin-notifications" class="tab-panel hidden">
+  <div class="card">
+    <h2>📧 Email Log (Simulated)</h2>
+    <p style="color:var(--muted); font-size:0.85rem; margin-bottom:16px;">No real emails are sent — this is a log of what would have been delivered.</p>
+    <div id="admin-notifications-list"></div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
