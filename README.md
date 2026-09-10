@@ -2,7 +2,7 @@
 
 A full-stack appointment booking platform built from scratch with vanilla JavaScript, jQuery, Vercel Serverless Functions, and Supabase (PostgreSQL). Supports customer booking flows and a complete admin management dashboard, with real database-level safeguards against double-booking.
 
-**Live demo:** [add your Vercel URL here once deployed]
+**Live demo:** https://appointment-booking-app-wine.vercel.app/
 
 ---
 
@@ -118,7 +118,7 @@ appointment-booking/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/appointment-booking-platform.git
+git clone https://github.com/sangeetha-iscribble/appointment-booking-platform.git
 cd appointment-booking-platform
 ```
 
@@ -135,8 +135,8 @@ npm install
 ### 4. Configure environment variables
 Create a `.env` file in the project root:
 ```
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+SUPABASE_URL=https://nxrzcovwjzfzwsqndlpo.supabase.co/
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54cnpjb3Z3anpmendzcW5kbHBvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4ODI0MzgxMywiZXhwIjoyMTAzODE5ODEzfQ.97xni9g_SujMEoW2KHi_A_7UrdCvdWrCYXdx9oFU5pI
 ```
 
 ### 5. Run locally
